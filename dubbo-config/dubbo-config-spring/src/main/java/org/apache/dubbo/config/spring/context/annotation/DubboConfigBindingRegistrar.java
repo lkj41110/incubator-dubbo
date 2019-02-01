@@ -18,6 +18,7 @@ package org.apache.dubbo.config.spring.context.annotation;
 
 import org.apache.dubbo.config.AbstractConfig;
 import org.apache.dubbo.config.spring.beans.factory.annotation.DubboConfigBindingBeanPostProcessor;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -85,7 +86,7 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
                                           boolean multiple,
                                           BeanDefinitionRegistry registry) {
 
-        Map<String, String> properties = getSubProperties(environment.getPropertySources(), prefix);
+        Map<String, Object> properties = getSubProperties(environment.getPropertySources(), prefix);
 
         if (CollectionUtils.isEmpty(properties)) {
             if (log.isDebugEnabled()) {
@@ -157,7 +158,7 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
 
     }
 
-    private Set<String> resolveMultipleBeanNames(Map<String, String> properties) {
+    private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
 
         Set<String> beanNames = new LinkedHashSet<String>();
 
@@ -178,10 +179,10 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
 
     }
 
-    private String resolveSingleBeanName(Map<String, String> properties, Class<? extends AbstractConfig> configClass,
+    private String resolveSingleBeanName(Map<String, Object> properties, Class<? extends AbstractConfig> configClass,
                                          BeanDefinitionRegistry registry) {
 
-        String beanName = properties.get("id");
+        String beanName = (String) properties.get("id");
 
         if (!StringUtils.hasText(beanName)) {
             BeanDefinitionBuilder builder = rootBeanDefinition(configClass);
