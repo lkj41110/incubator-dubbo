@@ -117,7 +117,9 @@ public class ExceptionFilterTest {
         RpcInvocation invocation = new RpcInvocation("sayHello", new Class<?>[]{String.class}, new Object[]{"world"});
 
         RpcResult rpcResult = new RpcResult();
-        rpcResult.setException(new HessianException("hessian"));
+        //rpcResult.setException(new HessianException("hessian"));
+        rpcResult.setException(new MyEx());
+
 
         Invoker<DemoService> invoker = mock(Invoker.class);
         when(invoker.invoke(invocation)).thenReturn(rpcResult);
@@ -131,6 +133,10 @@ public class ExceptionFilterTest {
 
         Assertions.assertEquals(newResult.getException().getClass(), RuntimeException.class);
         Assertions.assertEquals(newResult.getException().getMessage(), StringUtils.toString(rpcResult.getException()));
+
+    }
+
+    class MyEx extends Exception{
 
     }
 

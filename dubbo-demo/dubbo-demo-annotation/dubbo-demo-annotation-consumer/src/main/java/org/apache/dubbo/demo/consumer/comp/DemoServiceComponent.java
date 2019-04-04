@@ -30,7 +30,7 @@ public class DemoServiceComponent implements DemoService {
     private DemoService demoService;
 
     @Override
-    public String sayHello(String name) {
+    public String sayHello(int name) {
         return demoService.sayHello(name);
     }
 }

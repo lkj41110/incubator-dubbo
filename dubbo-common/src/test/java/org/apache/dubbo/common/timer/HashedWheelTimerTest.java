@@ -21,6 +21,7 @@ import org.apache.dubbo.common.utils.NamedThreadFactory;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +30,11 @@ public class HashedWheelTimerTest {
     private class PrintTask implements TimerTask {
 
         @Override
-        public void run(Timeout timeout) {
+        public void run(Timeout timeout) throws InterruptedException {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            System.out.println(LocalTime.now());
             System.out.println("task :" + LocalDateTime.now().format(formatter));
+            Thread.sleep(5000);
         }
     }
 
@@ -39,7 +42,7 @@ public class HashedWheelTimerTest {
     public void newTimeout() throws InterruptedException {
         final Timer timer = newTimer();
         for (int i = 0; i < 10; i++) {
-            timer.newTimeout(new PrintTask(), 1, TimeUnit.SECONDS);
+            timer.newTimeout(new PrintTask(), 100, TimeUnit.MILLISECONDS);
             Thread.sleep(1000);
         }
         Thread.sleep(5000);
@@ -69,4 +72,23 @@ public class HashedWheelTimerTest {
                 100,
                 TimeUnit.MILLISECONDS);
     }
+
+
+    @Test
+    public  void test() throws Exception {
+        //创建Timer, 精度为100毫秒,
+        HashedWheelTimer timer = new HashedWheelTimer(100, TimeUnit.MILLISECONDS, 16);
+
+        System.out.println(LocalTime.now());
+
+        timer.newTimeout((timeout) -> {
+            System.out.println(LocalTime.now());
+            System.out.println(timeout);
+        }, 180, TimeUnit.MILLISECONDS);
+
+        //阻塞main线程
+        //System.in.read();
+    }
+
+
 }

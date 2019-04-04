@@ -16,6 +16,11 @@
  */
 package org.apache.dubbo.qos.server.handler;
 
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -25,10 +30,6 @@ import org.apache.dubbo.qos.command.DefaultCommandExecutor;
 import org.apache.dubbo.qos.command.NoSuchCommandException;
 import org.apache.dubbo.qos.command.decoder.TelnetCommandDecoder;
 import org.apache.dubbo.qos.common.QosConstants;
-
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * Telnet process handler

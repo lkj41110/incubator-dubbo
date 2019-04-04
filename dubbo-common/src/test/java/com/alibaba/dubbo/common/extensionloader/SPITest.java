@@ -3,7 +3,6 @@ package com.alibaba.dubbo.common.extensionloader;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.extension.ext1.SimpleExt;
 import org.apache.dubbo.common.extension.ext2.Ext2;
-import org.junit.Test;
 
 /**
  * @author luokai
@@ -11,7 +10,6 @@ import org.junit.Test;
  */
 public class SPITest {
     //普通加载器
-    @Test
     public void getExtensionLoadergetExtensionLoader() {
         SimpleExt ext = ExtensionLoader.getExtensionLoader(SimpleExt.class).getDefaultExtension();
         System.out.println(ext.bang(null, 1));
