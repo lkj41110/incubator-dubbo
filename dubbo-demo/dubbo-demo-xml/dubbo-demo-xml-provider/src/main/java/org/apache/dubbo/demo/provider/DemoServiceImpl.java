@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.demo.provider;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.demo.DemoService;
 import org.apache.dubbo.rpc.RpcContext;
 
@@ -26,9 +27,14 @@ public class DemoServiceImpl implements DemoService {
     private static final Logger logger = LoggerFactory.getLogger(DemoServiceImpl.class);
 
     @Override
-    public String sayHello(int name) {
-        logger.info("Hello " + name + ", request from consumer: " + RpcContext.getContext().getRemoteAddress());
-        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
+    public String sayHello(String name) {
+        //try {
+        //    Thread.sleep(6000L);
+        //} catch (InterruptedException e) {
+        //    e.printStackTrace();
+        //}
+        logger.info("Hello " + name + ", request from consumer: " + RpcContext.getContext().getRemoteAddress()+"  "+JSON.toJSONString(RpcContext.getContext().getArguments()));
+        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress() + "  " + JSON.toJSONString(RpcContext.getContext().getArguments());
     }
 
 }

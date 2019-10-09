@@ -37,6 +37,10 @@ public class TypeDefinition {
     private List<String> enums;
     private String $ref;
     private Map<String, TypeDefinition> properties;
+    private String typeBuilderName;
+
+    public TypeDefinition() {
+    }
 
     public TypeDefinition(String type) {
         this.type = type;
@@ -59,20 +63,24 @@ public class TypeDefinition {
 
     public List<TypeDefinition> getItems() {
         if (items == null) {
-            items = new ArrayList<TypeDefinition>();
+            items = new ArrayList<>();
         }
         return items;
     }
 
     public Map<String, TypeDefinition> getProperties() {
         if (properties == null) {
-            properties = new HashMap<String, TypeDefinition>();
+            properties = new HashMap<>();
         }
         return properties;
     }
 
     public String getType() {
         return type;
+    }
+
+    public String getTypeBuilderName() {
+        return typeBuilderName;
     }
 
     public void set$ref(String $ref) {
@@ -97,6 +105,10 @@ public class TypeDefinition {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setTypeBuilderName(String typeBuilderName) {
+        this.typeBuilderName = typeBuilderName;
     }
 
     @Override

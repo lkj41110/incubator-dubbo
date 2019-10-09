@@ -24,14 +24,14 @@ import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.demo.DemoService;
 
 public class Application {
-    /**
-     * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
-     * launch the application
-     */
     public static void main(String[] args) {
         ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
         reference.setApplication(new ApplicationConfig("dubbo-demo-api-consumer"));
-        reference.setRegistry(new RegistryConfig("multicast://224.5.6.7:1234"));
+        reference.setRegistry(new RegistryConfig("zookeeper://127.0.0.1:2181"));
+        //RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
+        //Registry registry = registryFactory.getRegistry(URL.valueOf("zookeeper://localhost:2181"));
+        //registry.register(URL.valueOf("override://0.0.0.0/org.apache.dubbo.demo.DemoService?category=configurators&dynamic=false&application=foo&mock=force:return+null"));
+
         reference.setInterface(DemoService.class);
         DemoService service = reference.get();
         String message = service.sayHello("dubbo");

@@ -16,18 +16,16 @@
  */
 package org.apache.dubbo.metadata.integration;
 
-import com.google.gson.Gson;
-import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.metadata.definition.model.FullServiceDefinition;
 import org.apache.dubbo.metadata.store.test.JTestMetadataReport4Test;
+
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -121,6 +119,30 @@ public class MetadataReportServiceTest {
         Assertions.assertEquals(map.get("application"), "vicpubconsumer");
         Assertions.assertEquals(map.get("version"), "1.0.x");
 
+    }
+
+    @Test
+    public void testIgnorePublishProvider() throws InterruptedException {
+        URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.3&application=vicpubp&generic=true&interface=org.apache.dubbo.metadata.integration.XXXX&side=provider");
+        metadataReportService1.publishProvider(publishUrl);
+        Thread.sleep(300);
+
+        JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.metadataReport;
+
+        String value = jTestMetadataReport4Test.store.get(JTestMetadataReport4Test.getProviderKey(publishUrl));
+        Assertions.assertNull(value);
+    }
+
+    @Test
+    public void testIgnorePublishConsumer() throws InterruptedException {
+        URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.XXXService?version=1.0.x&application=vicpubconsumer&generic=true&side=consumer");
+        metadataReportService1.publishConsumer(publishUrl);
+        Thread.sleep(300);
+
+        JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.metadataReport;
+
+        String value = jTestMetadataReport4Test.store.get(JTestMetadataReport4Test.getConsumerKey(publishUrl));
+        Assertions.assertNull(value);
     }
 
     private FullServiceDefinition toServiceDefinition(String urlQuery) {

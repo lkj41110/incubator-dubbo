@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY_PREFIX;
+
 public final class URLBuilder {
     private String protocol;
 
@@ -337,13 +339,13 @@ public final class URLBuilder {
 
     public boolean hasParameter(String key) {
         String value = getParameter(key);
-        return value != null && value.length() > 0;
+        return StringUtils.isNotEmpty(value);
     }
 
     public String getParameter(String key) {
         String value = parameters.get(key);
         if (StringUtils.isEmpty(value)) {
-            value = parameters.get(Constants.DEFAULT_KEY_PREFIX + key);
+            value = parameters.get(DEFAULT_KEY_PREFIX + key);
         }
         return value;
     }

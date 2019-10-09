@@ -19,13 +19,15 @@ package org.apache.dubbo.demo.provider;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Application {
-    /**
-     * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
-     * launch the application
-     */
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-provider.xml");
         context.start();
+
+        //DemoService demoService = (DemoService) context.getBean("demoService1");
+        ////while (true) {
+        //    String hello = demoService.sayHello("world");
+        ////    System.out.println("----------------" + hello);
+        ////}
         System.in.read();
     }
 }
