@@ -286,7 +286,7 @@ public class ExtensionLoader<T> {
 
     /**
      * Get extension's instance. Return <code>null</code> if extension is not found or is not initialized. Pls. note
-     * that this method will not trigger extension load.
+     * that this method will not trigger extension loadmethods =.
      * <p>
      * In order to trigger extension load, call {@link #getExtension(String)} instead.
      *
@@ -492,12 +492,15 @@ public class ExtensionLoader<T> {
         return (T) instance;
     }
 
-    private IllegalStateException findException(String name) {
+    private void findException(String name) {
         for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) {
             if (entry.getKey().toLowerCase().contains(name.toLowerCase())) {
-                return entry.getValue();
+                throw entry.getValue();
             }
         }
+    }
+
+    private IllegalStateException noExtensionException(String name) {
         StringBuilder buf = new StringBuilder("No such extension " + type.getName() + " by name " + name);
 
 
@@ -519,9 +522,11 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("unchecked")
     private T createExtension(String name) {
+        // throws any possible exception in loading period.
+        findException(name);
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null) {
-            throw findException(name);
+            throw noExtensionException(name);
         }
         try {
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
@@ -733,7 +738,7 @@ public class ExtensionLoader<T> {
         }
         if (clazz.isAnnotationPresent(Adaptive.class)) {
             cacheAdaptiveClass(clazz);
-        } else if (isWrapperClass(clazz)) {
+        } else if (isWrapperClass(clazz)) { //判断是否是包装类
             cacheWrapperClass(clazz);
         } else {
             clazz.getConstructor();

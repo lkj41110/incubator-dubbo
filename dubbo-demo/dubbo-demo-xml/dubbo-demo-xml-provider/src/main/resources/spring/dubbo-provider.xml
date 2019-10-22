@@ -27,8 +27,22 @@
 
     <dubbo:protocol name="dubbo"/>
 
+
+    <!-- service implementation, as same as regular local bean -->
     <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImpl"/>
+    <bean id="demoService2" class="org.apache.dubbo.demo.provider.DemoServiceImpl2"/>
 
     <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
+    <!-- declare the service interface to be exported -->
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" />
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService2" ref="demoService2" />
+
+
+    <!--&lt;!&ndash; service implementation, as same as regular local bean &ndash;&gt;-->
+    <!--<bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImpl"/>-->
+
+    <!--&lt;!&ndash; declare the service interface to be exported &ndash;&gt;-->
+    <!--<dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" scope="local" protocol="injvm"/>-->
+    <!--<dubbo:reference id="demoService1" interface="org.apache.dubbo.demo.DemoService" scope="local"/>-->
 
 </beans>

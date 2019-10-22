@@ -603,16 +603,10 @@ public abstract class AbstractConfig implements Serializable {
             Method[] methods = getClass().getMethods();
             for (Method method : methods) {
                 if (MethodUtils.isSetter(method)) {
-                    try {
-                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method)));
-                        // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
-                        if (StringUtils.isNotEmpty(value) && ClassUtils.isTypeMatch(method.getParameterTypes()[0], value)) {
-                            method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value));
-                        }
-                    } catch (NoSuchMethodException e) {
-                        logger.info("Failed to override the property " + method.getName() + " in " +
-                                this.getClass().getSimpleName() +
-                                ", please make sure every property has getter/setter method provided.");
+                    String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method)));
+                    // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
+                    if (StringUtils.isNotEmpty(value) && ClassUtils.isTypeMatch(method.getParameterTypes()[0], value)) {
+                        method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value));
                     }
                 } else if (isParametersSetter(method)) {
                     String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method)));

@@ -17,15 +17,35 @@
 package org.apache.dubbo.demo.consumer;
 
 import org.apache.dubbo.demo.DemoService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Application {
-    public static void main(String[] args) {
+    /**
+     * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
+     * launch the application
+     */
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+
+    public static void main(String[] args) throws InterruptedException {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer.xml");
         context.start();
-        DemoService demoService = context.getBean("demoService", DemoService.class);
-        String hello = demoService.sayHello("world");
-        System.out.println("result: " + hello);
+        DemoService demoService = (DemoService) context.getBean("demoService");
+        while (true) {
+            try {
+                String hello = demoService.sayHello("world");
+                System.out.println("----------------" + hello);
+            } catch (Exception e) {
+                logger.info("aaaaaaa" + e);
+            }
+            Thread.sleep(1000);
+        }
+        //Future<String> fooFuture = RpcContext.getContext().getFuture();
+        //RegistryFactory registryFactory
+        //while(true) {
+        //    Object result = demoService.$invoke("sayHello", new String[]{"String"}, new Object[]{1});
+        //    System.out.println("result: " + result);
+
     }
 }

@@ -35,6 +35,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import static org.apache.dubbo.rpc.Constants.SERVICE_FILTER_KEY;
+import static org.apache.dubbo.rpc.Constants.EXPORTER_LISTENER_KEY;
+
 public class AbstractServiceConfigTest {
     @Test
     public void testVersion() throws Exception {

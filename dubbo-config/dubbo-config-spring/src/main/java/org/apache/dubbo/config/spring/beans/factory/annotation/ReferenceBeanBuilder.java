@@ -22,7 +22,6 @@ import org.apache.dubbo.config.MethodConfig;
 import org.apache.dubbo.config.annotation.Method;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.spring.ReferenceBean;
-
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -37,7 +36,7 @@ import java.util.Map;
 import static org.apache.dubbo.config.spring.util.AnnotationUtils.getAttribute;
 import static org.apache.dubbo.config.spring.util.AnnotationUtils.getAttributes;
 import static org.apache.dubbo.config.spring.util.AnnotationUtils.resolveServiceInterfaceClass;
-import static org.apache.dubbo.config.spring.util.BeanFactoryUtils.getNullableBean;
+import static org.apache.dubbo.config.spring.util.BeanFactoryUtils.getOptionalBean;
 import static org.apache.dubbo.config.spring.util.ObjectUtils.of;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
@@ -81,7 +80,7 @@ class ReferenceBeanBuilder extends AnnotatedInterfaceConfigBeanBuilder<Reference
 
         String consumerBeanName = getAttribute(attributes, "consumer");
 
-        ConsumerConfig consumerConfig = getNullableBean(applicationContext, consumerBeanName, ConsumerConfig.class);
+        ConsumerConfig consumerConfig = getOptionalBean(applicationContext, consumerBeanName, ConsumerConfig.class);
 
         referenceBean.setConsumer(consumerConfig);
 

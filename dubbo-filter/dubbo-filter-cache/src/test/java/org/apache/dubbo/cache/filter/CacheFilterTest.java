@@ -26,12 +26,17 @@ import org.apache.dubbo.rpc.AsyncRpcResult;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcInvocation;
-
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import static org.mockito.BDDMockito.given;
@@ -133,5 +138,43 @@ public class CacheFilterTest {
         Result result2 = cacheFilter.invoke(invoker2, invocation);
         Assertions.assertNull(result1.getValue());
         Assertions.assertNull(result2.getValue());
+    }
+
+
+    @Test
+    public void test1() {
+        String fileName = System.getProperty("user.home") + "/.dubbo/dubbo-registry-127.0.0.1.cache";
+
+        file = new File(fileName);
+        if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
+            if (!file.getParentFile().mkdirs()) {
+                throw new IllegalArgumentException("Invalid registry cache file " + file + ", cause: Failed to create directory " + file.getParentFile() + "!");
+            }
+        }
+        loadProperties();
+
+    }
+
+    private File file;
+    private Properties properties = new Properties();
+
+    private void loadProperties() {
+        if (file != null && file.exists()) {
+            InputStream in = null;
+            try {
+                in = new FileInputStream(file);
+                properties.load(in);
+            } catch (Throwable e) {
+                //logger.warn("Failed to load registry cache file " + file, e);
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        //logger.warn(e.getMessage(), e);
+                    }
+                }
+            }
+        }
     }
 }

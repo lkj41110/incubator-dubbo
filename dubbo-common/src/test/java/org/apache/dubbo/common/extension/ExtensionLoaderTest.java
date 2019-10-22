@@ -49,12 +49,12 @@ import org.apache.dubbo.common.extension.ext9_empty.Ext9Empty;
 import org.apache.dubbo.common.extension.ext9_empty.impl.Ext9EmptyImpl;
 import org.apache.dubbo.common.extension.injection.InjectExt;
 import org.apache.dubbo.common.extension.injection.impl.InjectExtImpl;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
@@ -193,6 +193,10 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_hasExtension_wrapperIsNotExt() throws Exception {
+        /**
+         * 包装类不属于extensive！！
+         * {@link ExtensionLoader#loadClass(Map, java.net.URL, Class, String)}
+         */
         assertTrue(ExtensionLoader.getExtensionLoader(WrappedExt.class).hasExtension("impl1"));
         assertFalse(ExtensionLoader.getExtensionLoader(WrappedExt.class).hasExtension("impl1,impl2"));
         assertFalse(ExtensionLoader.getExtensionLoader(WrappedExt.class).hasExtension("xxx"));
@@ -232,6 +236,9 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_AddExtension() throws Exception {
+        /**
+         * 可手动添加
+         */
         try {
             ExtensionLoader.getExtensionLoader(AddExt1.class).getExtension("Manual1");
             fail();
@@ -354,6 +361,9 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_InitError() throws Exception {
+        /**
+         * 初始化创建失败
+         */
         ExtensionLoader<InitErrorExt> loader = ExtensionLoader.getExtensionLoader(InitErrorExt.class);
 
         loader.getExtension("ok");
@@ -369,7 +379,8 @@ public class ExtensionLoaderTest {
 
     @Test
     public void testLoadActivateExtension() throws Exception {
-        // test default
+        //// test default
+        ////直接找group的组
         URL url = URL.valueOf("test://localhost/test");
         List<ActivateExt1> list = ExtensionLoader.getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, new String[]{}, "default_group");
@@ -424,12 +435,23 @@ public class ExtensionLoaderTest {
         list = ExtensionLoader.getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
         Assertions.assertEquals(2, list.size());
-        Assertions.assertSame(list.get(0).getClass(), ActivateExt1Impl1.class);
-        Assertions.assertSame(list.get(1).getClass(), OrderActivateExtImpl1.class);
+        Assertions.assertTrue(list.get(0).getClass() == ActivateExt1Impl1.class);
+        Assertions.assertTrue(list.get(1).getClass() == OrderActivateExtImpl1.class);
+
+        //吧group 的取出来  代替 default   ！！！！
+        url = URL.valueOf("test://localhost/test?ext=order2,default,order1");
+        list = ExtensionLoader.getExtensionLoader(ActivateExt1.class)
+                .getActivateExtension(url, "ext", "default_group");
+        Assertions.assertEquals(2, list.size());
+        Assertions.assertTrue(list.get(0).getClass() == OrderActivateExtImpl2.class);
+        Assertions.assertTrue(list.get(1).getClass() == OrderActivateExtImpl1.class);
     }
 
     @Test
     public void testInjectExtension() {
+        /**
+         * 注入内容
+         */
         // test default
         InjectExt injectExt = ExtensionLoader.getExtensionLoader(InjectExt.class).getExtension("injection");
         InjectExtImpl injectExtImpl = (InjectExtImpl) injectExt;
