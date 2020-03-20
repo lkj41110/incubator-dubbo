@@ -16,19 +16,14 @@
  */
 package org.apache.dubbo.remoting.zookeeper.curator;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.utils.NetUtils;
-import org.apache.dubbo.remoting.zookeeper.ChildListener;
-
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingServer;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.remoting.zookeeper.ChildListener;
 import org.apache.zookeeper.WatchedEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -47,15 +42,16 @@ public class CuratorZookeeperClientTest {
     private CuratorZookeeperClient curatorClient;
     CuratorFramework client = null;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        int zkServerPort = NetUtils.getAvailablePort();
-        zkServer = new TestingServer(zkServerPort, true);
-        curatorClient = new CuratorZookeeperClient(URL.valueOf("zookeeper://127.0.0.1:" +
-                zkServerPort + "/org.apache.dubbo.registry.RegistryService"));
-        client = CuratorFrameworkFactory.newClient(zkServer.getConnectString(), new ExponentialBackoffRetry(1000, 3));
-        client.start();
-    }
+    //@BeforeEach
+    //public void setUp() throws Exception {
+    //    //int zkServerPort = NetUtils.getAvailablePort();
+    //    int zkServerPort = 2181;
+    //    zkServer = new TestingServer(zkServerPort, true);
+    //    curatorClient = new CuratorZookeeperClient(URL.valueOf("zookeeper://127.0.0.1:" +
+    //            zkServerPort + "/org.apache.dubbo.registry.RegistryService"));
+    //    client = CuratorFrameworkFactory.newClient(zkServer.getConnectString(), new ExponentialBackoffRetry(1000, 3));
+    //    client.start();
+    //}
 
     @Test
     public void testCheckExists() {
@@ -64,6 +60,27 @@ public class CuratorZookeeperClientTest {
         assertThat(curatorClient.checkExists(path), is(true));
         assertThat(curatorClient.checkExists(path + "/noneexits"), is(false));
     }
+
+    @Test
+    public void testDelete() {
+        //String path = "/dubbo/org.apache.dubbo.demo.DemoService/providers";
+        ////curatorClient.create(path, false);
+        //
+        ////zkServer = new TestingServer(zkServerPort, true);
+        //curatorClient = new CuratorZookeeperClient(URL.valueOf("zookeeper://127.0.0.1:2181/ConfigCenterConfig?check=true&config-file=dubbo.properties&group=dubbo&highest-priority=false&namespace=dubbo&timeout=3000"));
+        ////client = CuratorFrameworkFactory.newClient(zkServer.getConnectString(), new ExponentialBackoffRetry(1000, 3));
+        ////client.start();
+        //
+        //
+        //List<String> children = curatorClient.getChildren(path);
+        //for (String p : children) {
+        //    curatorClient.deletePath(path +"/"+ p);
+        //}
+        ////System.out.println(children);
+        ////assertThat(curatorClient.checkExists(path), is(true));
+        ////assertThat(curatorClient.checkExists(path + "/noneexits"), is(false));
+    }
+
 
     @Test
     public void testChildrenPath() {

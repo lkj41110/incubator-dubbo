@@ -40,7 +40,7 @@ import java.nio.ByteBuffer;
  * indexing</a>. It means the index of the first byte is always {@code 0} and
  * the index of the last byte is always {@link #capacity() capacity - 1}.  For
  * example, to iterate all bytes of a buffer, you can do the following,
- * regardless of its internal implementation:
+ * regardless of its META-INF.dubbo.internal implementation:
  * <p/>
  * <pre>
  * {@link ChannelBuffer} buffer = ...;
@@ -254,7 +254,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * IndexOutOfBoundsException}.</li> <li>a dynamic buffer will expand its
      * capacity so that the number of the {@link #writableBytes() writable
      * bytes} becomes equal to or greater than the specified value. The
-     * expansion involves the reallocation of the internal buffer and
+     * expansion involves the reallocation of the META-INF.dubbo.internal buffer and
      * consequently memory copy.</li> </ul>
      *
      * @param writableBytes the expected minimum number of writable bytes

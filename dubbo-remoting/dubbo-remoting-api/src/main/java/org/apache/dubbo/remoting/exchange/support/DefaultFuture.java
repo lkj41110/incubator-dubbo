@@ -256,14 +256,8 @@ public class DefaultFuture extends CompletableFuture<Object> {
                 + (sent > 0 ? " client elapsed: " + (sent - start)
                 + " ms, server elapsed: " + (nowTimestamp - sent)
                 : " elapsed: " + (nowTimestamp - start)) + " ms, timeout: "
-                + timeout + " ms, request: " + (logger.isDebugEnabled() ? request : getRequestWithoutData()) + ", channel: " + channel.getLocalAddress()
+                + timeout + " ms, request: " + request + ", channel: " + channel.getLocalAddress()
                 + " -> " + channel.getRemoteAddress();
-    }
-
-    private Request getRequestWithoutData() {
-        Request newRequest = request;
-        newRequest.setData(null);
-        return newRequest;
     }
 
     private static class TimeoutCheckTask implements TimerTask {

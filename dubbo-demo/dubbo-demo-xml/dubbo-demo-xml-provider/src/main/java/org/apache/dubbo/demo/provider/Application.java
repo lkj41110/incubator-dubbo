@@ -22,6 +22,12 @@ public class Application {
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-provider.xml");
         context.start();
+
+        //DemoService demoService = (DemoService) context.getBean("demoService1");
+        ////while (true) {
+        //    String hello = demoService.sayHello("world");
+        ////    System.out.println("----------------" + hello);
+        ////}
         System.in.read();
     }
 }
