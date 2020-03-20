@@ -30,10 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
 import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
@@ -73,7 +70,7 @@ public class RpcContext {
         }
     };
 
-    private final Map<String, String> attachments = new HashMap<String, String>();
+    protected final Map<String, Object> attachments = new HashMap<>();
     private final Map<String, Object> values = new HashMap<String, Object>();
 
     private List<URL> urls;
@@ -104,6 +101,8 @@ public class RpcContext {
     private Object request;
     private Object response;
     private AsyncContext asyncContext;
+
+    private boolean remove = true;
 
 
     protected RpcContext() {
@@ -140,6 +139,14 @@ public class RpcContext {
         return LOCAL.get();
     }
 
+    public boolean canRemove() {
+        return remove;
+    }
+
+    public void clearAfterEachInvoke(boolean remove) {
+        this.remove = remove;
+    }
+
     public static void restoreContext(RpcContext oldContext) {
         LOCAL.set(oldContext);
     }
@@ -150,7 +157,9 @@ public class RpcContext {
      * @see org.apache.dubbo.rpc.filter.ContextFilter
      */
     public static void removeContext() {
-        LOCAL.remove();
+        if (LOCAL.get().canRemove()) {
+            LOCAL.remove();
+        }
     }
 
     /**
@@ -462,12 +471,26 @@ public class RpcContext {
     }
 
     /**
-     * get attachment.
+     * use {@link #getObjectAttachment(String)} instead.
      *
      * @param key
      * @return attachment
      */
     public String getAttachment(String key) {
+        Object value = attachments.get(key);
+        if (value instanceof String) {
+            return (String) value;
+        }
+        return null; // or JSON.toString(value);
+    }
+
+    /**
+     * get attachment.
+     *
+     * @param key
+     * @return attachment
+     */
+    public Object getObjectAttachment(String key) {
         return attachments.get(key);
     }
 
@@ -478,7 +501,7 @@ public class RpcContext {
      * @param value
      * @return context
      */
-    public RpcContext setAttachment(String key, String value) {
+    public RpcContext setAttachment(String key, Object value) {
         if (value == null) {
             attachments.remove(key);
         } else {
@@ -503,7 +526,17 @@ public class RpcContext {
      *
      * @return attachments
      */
+    @Deprecated
     public Map<String, String> getAttachments() {
+        return new AttachmentsAdapter.ObjectToStringMap(this.getObjectAttachments());
+    }
+
+    /**
+     * get attachments.
+     *
+     * @return attachments
+     */
+    public Map<String, Object> getObjectAttachments() {
         return attachments;
     }
 
@@ -513,7 +546,22 @@ public class RpcContext {
      * @param attachment
      * @return context
      */
+    @Deprecated
     public RpcContext setAttachments(Map<String, String> attachment) {
+        this.attachments.clear();
+        if (attachment != null && attachment.size() > 0) {
+            this.attachments.putAll(attachment);
+        }
+        return this;
+    }
+
+    /**
+     * set attachments
+     *
+     * @param attachment
+     * @return context
+     */
+    public RpcContext setObjectAttachments(Map<String, Object> attachment) {
         this.attachments.clear();
         if (attachment != null && attachment.size() > 0) {
             this.attachments.putAll(attachment);
@@ -669,34 +717,9 @@ public class RpcContext {
                 removeAttachment(ASYNC_KEY);
             }
         } catch (final RpcException e) {
-            return new CompletableFuture<T>() {
-                @Override
-                public boolean cancel(boolean mayInterruptIfRunning) {
-                    return false;
-                }
-
-                @Override
-                public boolean isCancelled() {
-                    return false;
-                }
-
-                @Override
-                public boolean isDone() {
-                    return true;
-                }
-
-                @Override
-                public T get() throws InterruptedException, ExecutionException {
-                    throw new ExecutionException(e.getCause());
-                }
-
-                @Override
-                public T get(long timeout, TimeUnit unit)
-                        throws InterruptedException, ExecutionException,
-                        TimeoutException {
-                    return get();
-                }
-            };
+            CompletableFuture<T> exceptionFuture = new CompletableFuture<>();
+            exceptionFuture.completeExceptionally(e);
+            return exceptionFuture;
         }
         return ((CompletableFuture<T>) getContext().getFuture());
     }
